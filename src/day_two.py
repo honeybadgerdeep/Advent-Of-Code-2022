@@ -1,3 +1,4 @@
+from test import test_outcome
 
 class RockPaperScissorsGame:
 
@@ -41,7 +42,7 @@ class RockPaperScissorsGame:
 
     def __init__(self, opponent_move_encrypted: str, player_move_encrypted: str, encyption_strategy: int) -> None:
         if (encyption_strategy != self.ELF_ENCRYPTION and encyption_strategy != self.ASSUMED_ENCRYPTION):
-            raise Exception("Encryption strategy is incorrect")
+            raise Exception("Encryption strategy is invalid!")
 
         self.encryption_strategy = encyption_strategy
         self.opponent_move = self.decrypt_opponent_move(opponent_move_encrypted)
@@ -84,6 +85,8 @@ class RockPaperScissorsGame:
     def decrypt_opponent_move(self, move_encrypted: int) -> int:
         return self.SYMBOL_DEF[move_encrypted]
 
+# Helper functions
+
 def get_games_from_input(input_file_url: str, encryption_strategy: int) -> list[RockPaperScissorsGame]:
     games: list[RockPaperScissorsGame] = []
     with open(input_file_url) as file:
@@ -93,16 +96,30 @@ def get_games_from_input(input_file_url: str, encryption_strategy: int) -> list[
                 games.append(RockPaperScissorsGame(tokens[0], tokens[1], encryption_strategy))
     return games
 
-def day_two_puzzle_one(input_file_url: str) -> None:
-    games = get_games_from_input(input_file_url, RockPaperScissorsGame.ASSUMED_ENCRYPTION)
-    print(sum([game.get_outcome() for game in games]))
+def play_strategy(input_file_url: str, encryption_strategy: str) -> int:
+    games = get_games_from_input(input_file_url, encryption_strategy)
+    return get_strategy_outcome(games)
 
-def day_two_puzzle_two(input_file_url: str) -> None:
-    games = get_games_from_input(input_file_url, RockPaperScissorsGame.ELF_ENCRYPTION)
-    print(sum([game.get_outcome() for game in games]))
+def get_strategy_outcome(games: list[RockPaperScissorsGame]) -> int:
+    return sum([game.get_outcome() for game in games])
 
+# Puzzle Execution
+
+def day_two_puzzle_one(test: str, input: str) -> None:
+    test_puzzle = play_strategy(test, RockPaperScissorsGame.ASSUMED_ENCRYPTION)
+    test_outcome("Puzzle 1", test_puzzle, 15)
+    print("Puzzle 1 Result: {result}".format(result = play_strategy(input, RockPaperScissorsGame.ASSUMED_ENCRYPTION)))
+
+def day_two_puzzle_two(test: str, input: str) -> None:
+    test_puzzle = play_strategy(test, RockPaperScissorsGame.ELF_ENCRYPTION)
+    test_outcome("Puzzle 2", test_puzzle, 12)
+    print("Puzzle 2 Result: {result}".format(result = play_strategy(input, RockPaperScissorsGame.ELF_ENCRYPTION)))
+
+# Driver
+ 
 if __name__ == "__main__":
-    input_file_url: str = "../input/day_two_puzzle_one_input.txt"
+    test: str = "../input/day_two_puzzle_one_test_input.txt"
+    input: str = "../input/day_two_puzzle_one_input.txt"
 
-    day_two_puzzle_one(input_file_url)
-    day_two_puzzle_two(input_file_url)
+    day_two_puzzle_one(test, input)
+    day_two_puzzle_two(test, input)
